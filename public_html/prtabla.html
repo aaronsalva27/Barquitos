@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <style media="screen">
+    tr,td{
+      width: 50px;
+      height:50px;
+      border: 1px solid black;
+    }
+
+    #img{
+      float: left;
+    }
+
+    #tabla{
+      float: left;
+    }
+
+    td,img{
+      max-width: 100%;
+      max-width: 100%;
+
+    }
+  </style>
+  <body>
+    <div id="tabla">
+
+    </div>
+    <div id="img">
+      <img id="v3" src="imagenes/barco1.jpg" data-v3="imagenes/barco1-1.jpg,imagenes/barco1-2.jpg,imagenes/barco1-3.jpg" draggable="true">
+      <img id="h3" src="imagenes/barco1.jpg" data-v3="imagenes/barco2-1.jpg,imagenes/barco2-2.jpg,imagenes/barco2-3.jpg" draggable="true">
+    </div>
+
+  </body>
+  <script type="text/javascript">
+    //////////////////////////////////////////////////////////////////////////////////////////////
+     var tablero = [
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0]
+
+            ]
+
+    var pocisionesOcupadas=[];
+    
+    
+    class Tablero {
+      ocupar(posicion){
+        pocisionesOcupadas.push(posicion);
+        console.log(pocisionesOcupadas);
+      }
+
+      comporbarOcupado(posicion){
+        for (var i=0;i<length.pocisionesOcupadas;i++) {
+          if(posicion==pocisionesOcupadas[i]) {
+            alert("Posició ocupada");
+            return false;
+          }
+        }
+        return true;
+      }
+     
+    }
+    tablero1 = new Tablero();
+
+    function generarTabla(){
+      var t = document.getElementById('tabla');
+      var table='';
+      var abecedario=new Array(' ','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
+      table+='<table>';
+
+      for (var i = 1; i <= 10; i++) {
+          table+='<tr>';
+        for (var j = 1; j <= 10; j++) {
+          table+='<td id='+j+''+abecedario[i]+'></td>';
+        }
+          table+='</tr>'
+        }
+
+      table+='</table>'
+      t.innerHTML=table;
+    }
+
+    generarTabla();
+    ///////////////////////////////////////////////////////////////////////////////
+    var arrayBarcos = new Array();
+    class barco {
+      constructor(tamaño,pocisions){
+        this.tamaño=tamaño;
+        this.pocisions=pocisions;
+      }
+
+      arraylist(barco){
+        arrayBarcos.push(barco);
+        console.log(arrayBarcos);
+      }
+
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    var tds = document.querySelectorAll('td');
+     [].forEach.call(tds, function (item) {
+         item.addEventListener('dragover', gestionarSobreDrag, false);
+         item.addEventListener('drop', gestionarDrop, false);
+         document.addEventListener("dragend",gestionarDragend , false );
+     });
+
+     var imatges = document.querySelectorAll('img');
+
+     [].forEach.call(imatges, function (item) {
+         item.addEventListener('dragstart', gestionarIniciDrag, false);
+     });
+
+     function gestionarSobreDrag(ev) {
+         ev.preventDefault();
+     }
+
+     function gestionarIniciDrag(ev) {
+         ev.dataTransfer.setData("imatge", ev.target.id);
+      }
+
+     function gestionarDragend(ev){
+
+       }
+
+     function gestionarDrop(ev) {
+         ev.preventDefault();
+         var cellid=ev.target.id
+         var data = ev.dataTransfer.getData("imatge");
+         var pocisions = ev.dataTransfer.getData("imatge").substring(1);
+         var numero= parseInt(ev.target.id.substring(0,ev.target.id.length-1));
+         var letra= ev.target.id.substring(ev.target.id.length-1);
+         var letraimg = ev.dataTransfer.getData("imatge").substring(0,1);
+         console.log(pocisions);
+         console.log(letraimg);
+         console.log(ev.target);
+         console.log(cellid);
+         console.log(letra);
+         console.log(numero);
+         console.log(data);
+
+         var barco1 = new barco(pocisions,cellid);
+         barco1.arraylist(barco1);
+         console.log(barco1);
+
+        if(letraimg=='v'){
+          insertarHotizontal(numero,letra,data,pocisions,cellid);
+         } else {
+          insertarVertical(numero,letra,data,pocisions,cellid);
+        }
+      }
+      ///////////////////////////////////////////////////////////////////////////////////////////
+      function insertarHotizontal(numero,letra,data,pocisions,cellid){
+        if(comprobarExisteH(cellid,pocisions,numero,letra)){
+          if (document.getElementById(cellid).childNodes.length < 1) {
+              var tmp=numero;
+              var imagen = document.getElementById(data);
+              var array= imagen.getAttribute("data-v3").split(',');
+              for (var i = 0; i < pocisions; i++) {
+                var put= String(tmp)+letra;
+                console.log(put);
+                tablero1.ocupar(put);
+                var imgfixed = document.getElementById(put);
+                console.log(imgfixed);
+                console.log(array[i]);
+                console.log(imagen);
+                  try{
+                  imgfixed.innerHTML="<img src="+array[i]+">";
+                  }catch(e){
+                  //alert(e);
+                  }
+                  tmp=numero+=1;
+                }
+             }
+          }
+      }
+
+      function insertarVertical(numero,letra,data,pocisions,cellid){
+        if(comprobarExisteV(cellid,pocisions,numero,letra)){
+          if (document.getElementById(cellid).childNodes.length < 1) {
+              var letratmp1= letra.charCodeAt(0);
+              var letrtmp2 = String.fromCharCode(letratmp1);
+              var imagen = document.getElementById(data);
+              var array= imagen.getAttribute("data-v3").split(',');
+              for (var i = 0; i < pocisions; i++) {
+                var put= numero+letrtmp2;
+                console.log(put);
+                tablero1.ocupar(put);
+                var imgfixed = document.getElementById(put);
+                console.log(imgfixed);
+                imgfixed.innerHTML="<img src="+array[i]+">";
+                letratmp1= letrtmp2.charCodeAt(0);
+                letratmp1+=1;
+                letrtmp2 = String.fromCharCode(letratmp1);
+
+              }
+            }
+          }
+      }
+
+      function comprobarExisteH(cellid,pocisions,numero,letra){
+        
+          var tmp=numero;
+          for (var i = 0; i < pocisions; i++) {
+            var put= String(tmp)+letra;
+            console.log("Comprobar:-- "+put);
+            tablero1.comporbarOcupado(pocisions);
+
+            if(document.getElementById(put)!=null){
+              console.log(cellid+" existe");
+              tmp=numero+=1;
+            }else{
+              alert("Pocisions no valida")
+              return false;
+            }
+          }
+          return true;
+        
+      }
+
+      function comprobarExisteV(cellid,pocisions,numero,letra){
+        var letratmp1= letra.charCodeAt(0);
+        var letrtmp2 = String.fromCharCode(letratmp1);
+        for (var i = 0; i < pocisions; i++) {
+          var put= numero+letrtmp2;
+          console.log("Comprobar:-- "+put)
+          if(document.getElementById(put)!=null){
+            console.log(cellid+" existe");
+            letratmp1= letrtmp2.charCodeAt(0);
+            letratmp1+=1;
+            letrtmp2 = String.fromCharCode(letratmp1);
+          }else{
+            alert("Pocisions no valida")
+            return false;
+          }
+        }
+        return true;
+      }
+     
+
+      
+
+  </script>
+</html>
